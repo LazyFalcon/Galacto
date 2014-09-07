@@ -67,26 +67,35 @@ function main(IO){
 		
 		io.rmvFromGroup(laser, 'lasers');
 		if (enemy.hp < 0){
-				dropBonus(enemy.pos.x, enemy.pos.y);
-				spawnExplosion(enemy.pos.x, enemy.pos.y);
-				rampage+=5;
-				io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
-					.enableKinematics()
-					.setBound('bottom', io.canvas.height+120)
-					// .createWithImage(scrapImage)
-					.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
-					.playAnim('scrap', 10, io)
-					.setLifetime(60/10*6)
-					.setVel(0, enemy.vel.y);
-				
-				io.rmvFromGroup(enemy, 'enemy');
+			dropBonus(enemy.pos.x, enemy.pos.y);
+			spawnExplosion(enemy.pos.x, enemy.pos.y);
+			rampage+=5;
+			io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
+				.enableKinematics()
+				.setBound('bottom', io.canvas.height+120)
+				// .createWithImage(scrapImage)
+				.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
+				.playAnim('scrap', 10, io)
+				.setLifetime(60/10*6)
+				.setVel(0, enemy.vel.y);
+			
+			io.rmvFromGroup(enemy, 'enemy');
 		}
 	});
 	io.setCollisionCallback('player', 'enemy', function(player_, enemy){
 		enemy.hp -= 100;
-		player_.getHit(100);
+		player_.getHit(1);
 		if (enemy.hp < 0){
-				io.rmvFromGroup(enemy, 'enemy');
+			spawnExplosion(enemy.pos.x, enemy.pos.y);
+			io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
+				.enableKinematics()
+				.setBound('bottom', io.canvas.height+120)
+				// .createWithImage(scrapImage)
+				.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
+				.playAnim('scrap', 10, io)
+				.setLifetime(60/10*6)
+				.setVel(0, enemy.vel.y);
+			io.rmvFromGroup(enemy, 'enemy');
 		}
 		if (player_.hp < 0){
 			// delete player.owner.handle;

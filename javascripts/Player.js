@@ -33,14 +33,25 @@ function Player(){
 		this.lives = 3;
 		this.livesText = io.addToGroup('GUI', new iio.Text('<3: '+this.lives,100,15)
 						.setFont('18px Consolas')
-						.setFillStyle('white'));
+						.setFillStyle('red'));
 		this.scoreText = io.addToGroup('GUI', new iio.Text('Score: '+this.score,io.canvas.width - 200,15)
 						.setFont('18px Consolas')
-						.setFillStyle('white'));
+						.setFillStyle('yellow'));
 		this.buff = null;
+		
+		this.shield = 100;
+		this.shieldText = io.addToGroup('GUI', new iio.Text('shield: '+this.shield+'%',20,45)
+						.setFont('18px Consolas')
+						.setFillStyle('blue'));
 	}
 
 	Player.prototype.getHit = function(damage){
+		if(this.shield > 0){
+			this.shield -= damage/3;
+			this.shieldText.setText('shield: '+Math.round(this.shield)+'%');
+			damage -= damage*this.shield/100;
+		}
+		// else {
 		this.hp -= damage;
 		this.hp = Math.max(this.hp, 0);
 		if(this.hp == 0){
@@ -50,7 +61,8 @@ function Player(){
 			if(this.lives == 0)
 				LostGame('ur noob!!! lolz!!');
 		}
-		this.hpText.setText('HP: '+this.hp);
+		this.hpText.setText('HP: '+Math.round(this.hp));
+		// }
 	}
 
 	Player.prototype.getPoints = function(points){
@@ -114,6 +126,8 @@ function Player(){
 			}
 		}
 		
+		this.shield = Math.max( Math.min(this.shield+0.1, 100) , 0);
+		this.shieldText.setText('shield: '+Math.round(this.shield)+'%');
 	}
 
 	Player.prototype.fire = function(x,y, mod){
