@@ -4,6 +4,8 @@
 	-bonusy
 	-bronie(uzywana jest jedna, )
 */
+var collection328 =' ☢ ☣ ♠ ♣ ♥ ♦ ♧ ♨ ♩ ♪ ♫ ♬ | ᚠ ᚡ ᚢ ᚣ ᚤ ᚥ ᚦ ᚧ ᚨ ᚩ ᚪ ᚫ ᚬ ᚭ ᚮ ᚯ ᚰ ᚱ ᚲ ᚳ ᚴ ᚵ ᚶ ᚷ ᚸ ᚹ ᚺ ᚻ ᚼ ᚽ ᚾ ᚿ | ↺ ↻ ∞ ➠ ➡ ➢ ➣ ➤ ➥ ➦ ➧ ➨ ➩ ➪ ➫ ➬ ➭ ➮ ➯ ➰ ➱ ➲ ➳ ➴ ➵ ➶ ➷ ➸ ➹ ➺ ➻ ➼ ➽ ➾   ✉ ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✨ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ ✹ ✺ ✻ ✼ ✽ ✾ ✿ ';
+
 var imgPath = 'img/';
 var fps = 60;
 var io;
@@ -20,9 +22,10 @@ var quit = false;
 
 var LostGame = function(text){
 	quit = true;
-	io.addToGroup('GUI', new iio.Text(text,100,400)
+	io.addToGroup('GUI', new iio.Text(text,io.canvas.width/2,io.canvas.height/2)
 						.setFont('58px Consolas')
-						.setFillStyle('red'),20);
+						.setTextAlign('center')
+						.setFillStyle('red'),-20);
 }
 
 var dropBonus = function(x,y){

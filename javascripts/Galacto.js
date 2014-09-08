@@ -1,6 +1,8 @@
 ﻿
 function main(IO){
 	io = IO;
+	// io.activateDebugger();
+	
 	var rampage = 0;
 	var scrapImage = new Image();
 	scrapImage.src = imgPath+'enemyScrap.png';
@@ -14,7 +16,6 @@ function main(IO){
 	
 	bonusImg = new Image();
 	bonusImg.src = imgPath+'bonus.png';
-	// io.activateDebugger();
 	
 	for(i=0; i<enemyImagPath.length; i++){
 		enemyImag[i] = new Image();
@@ -40,7 +41,7 @@ function main(IO){
 	io.addGroup('explosion');
 	setBackground();
 	player = io.addToGroup('player', new Player(io.canvas.center.x, io.canvas.height-100, 'Dez'));
-	player.switchWeapon(1);
+	player.switchWeapon(4);
 
  	window.addEventListener('keydown', function(event){
 		player.updateInput(event, true);
