@@ -1,10 +1,10 @@
 ﻿
 var projectiles = [
-	{name:'Gatling', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imgPath:imgPath+'gatling.png'},
-	{name:'Plasma-Gun', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-	{name:'Plasma-Gun', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-	{name:'Plasma-Gun', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-	{name:'Rocket', damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'rocket.png'},
+	{name:'Gatling', ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imgPath:imgPath+'gatling.png'},
+	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
+	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
+	{name:'Plasma-Gun Imprv.', ammo: '50', damage: 50, penetration: 5, range: 700, velocity:16, cooldown: 4, imgPath:imgPath+'plasma.png'},
+	{name:'Rocket', ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'rocket.png'},
 ];
 
 var playerAnim = [imgPath+'playerLeft.png',
@@ -31,7 +31,7 @@ function Player(){
 		this.input = [false, false, false, false, false];
 		this.weaponID = 0;
 		this.weaponCooldown = 0;
-		this.ammo = 50;
+		this.ammo = projectiles[0].ammo;
 		this.score = 13;
 		this.ammoText = io.addToGroup('GUI', new iio.Text('Ammo: ',20,30)
 						.setFont('18px Impact')
@@ -51,10 +51,13 @@ function Player(){
 						.setFont('18px Impact')
 						.setTextAlign('right')
 						.setFillStyle('yellow'));
+		this.weapText = io.addToGroup('GUI', new iio.Text('--- ',20, io.canvas.height-5)
+						.setFont('12px Impact')
+						.setFillStyle('white'));
 		this.buff = null;
 		
 		this.shield = 100;
-		this.shieldText = io.addToGroup('GUI', new iio.Text('shield: '+this.shield+'%',20,45)
+		this.shieldText = io.addToGroup('GUI', new iio.Text('Shield: '+this.shield+'%',20,45)
 						.setFont('18px Impact')
 						.setFillStyle('blue'));
 	}
@@ -62,7 +65,7 @@ function Player(){
 	Player.prototype.getHit = function(damage){
 		if(this.shield > 0){
 			this.shield -= damage/3;
-			this.shieldText.setText('shield: '+Math.round(this.shield)+'%');
+			this.shieldText.setText('Shield: '+Math.round(this.shield)+'%');
 			damage -= damage*this.shield/100;
 		}
 		// else {
@@ -76,8 +79,10 @@ function Player(){
 			for(var i=0; i< this.lives; i++)
 				slives += '♥';
 			this.livesText.setText(slives);
-			if(this.lives == 0)
+			if(this.lives == 0){
+				this.livesText.setText('✞');
 				LostGame('ur noob!!! lolz!!');
+			}
 		}
 		this.hpText.setText('HP: '+Math.round(this.hp));
 		// }
@@ -89,6 +94,13 @@ function Player(){
 		this.scoreText.setText('Score: '+this.score);
 	}
 
+	Player.prototype.switchWeapon = function(id){
+		projectiles[this.weaponID].ammo = this.ammo;
+		this.weaponID = id;
+		this.ammo = projectiles[id].ammo;
+		this.weapText.setText('ᐊ '+projectiles[id].name+' ᐅ');
+	}
+	
 	Player.prototype.updateInput = function(event, boolValue){
 			if(iio.keyCodeIs('a', event)){
 				this.input[LEFT] = boolValue;
@@ -111,19 +123,19 @@ function Player(){
 			event.preventDefault();
 			}
 			else if(iio.keyCodeIs('1', event)){
-				this.weaponID = 0;
+				this.switchWeapon(0);
 			event.preventDefault();
 			}
 			else if(iio.keyCodeIs('2', event)){
-				this.weaponID = 1;
+				this.switchWeapon(1);
 			event.preventDefault();
 			}
 			else if(iio.keyCodeIs('3', event)){
-				this.weaponID = 2;
+				this.switchWeapon(2);
 			event.preventDefault();
 			}
 			else if(iio.keyCodeIs('4', event)){
-				this.weaponID = 3;
+				this.switchWeapon(3);
 			event.preventDefault();
 			}
 			else if(iio.keyCodeIs('c', event)){
@@ -155,10 +167,11 @@ function Player(){
 			this.setAnimFrame(2);
 		else this.setAnimFrame(1);
 		
-		if(this.input[SPACE] && this.weaponCooldown < 0 && this.ammo > 0){
-			// this.ammo--;
-				this.fire(this.left()+15, this.pos.y, 0.5);
-				this.fire(this.right()-15, this.pos.y, -0.5);
+		if(this.input[SPACE] && this.weaponCooldown < 0 && (this.ammo > 0 || this.ammo == '∞')){
+			if(this.ammo != '∞')
+				this.ammo--;
+			this.fire(this.left()+15, this.pos.y, 0.5);
+			this.fire(this.right()-15, this.pos.y, -0.5);
 			this.weaponCooldown = projectiles[this.weaponID].cooldown;
 		}
 		else if(this.weaponCooldown > -1)
@@ -185,6 +198,7 @@ function Player(){
 				.setVel(mod,-projectiles[this.weaponID].velocity);
 		
 	}
+	
 	Player.prototype.spawnRocket = function(){
 		io.addToGroup('rockets', new Rocket(this.pos.x, this.pos.y-10))
 				.createWithImage(projectiles[4].image);

@@ -40,7 +40,7 @@ function main(IO){
 	io.addGroup('explosion');
 	setBackground();
 	player = io.addToGroup('player', new Player(io.canvas.center.x, io.canvas.height-100, 'Dez'));
-
+	player.switchWeapon(1);
 
  	window.addEventListener('keydown', function(event){
 		player.updateInput(event, true);
@@ -146,7 +146,7 @@ function main(IO){
 	
 	
 	
-	rampageText = io.addToGroup('GUI', new iio.Text('Rampage: '+rampage,io.canvas.width/2,15)
+	rampageText = io.addToGroup('GUI', new iio.Text('•Rampage•',io.canvas.width/2,15)
 						.setFont('18px Impact')
 						.setTextAlign('center')
 						.setFillStyle('white'));
@@ -159,11 +159,16 @@ function main(IO){
 		if(quit)
 			io.cancelFramerate();
 		if(rampage >= 100){
-			
+			rampageText.setText('Rampage');
 		}
 		else{
+			var tmp = Math.round(rampage/10);
+			var str = '';
+			for(var i=0; i<tmp; i++)
+				str += '•';
 			rampage = Math.max(0, rampage - 0.05);
-			rampageText.setText('Rampage: '+Math.round(rampage)+'%');
+			// rampageText.setText('Rampage: '+Math.round(rampage)+'%');
+			rampageText.setText(str);
 		}
 		player.updatePlayer();
 		
