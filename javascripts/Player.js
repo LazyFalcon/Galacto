@@ -1,10 +1,22 @@
-﻿
+﻿var LEFT = 0;
+var RIGHT = 1;
+var UP = 2;
+var DOWN = 3;
+var SPACE = 4;
+var ROCKET = 5;
+
 var projectiles = [
-	{name:'Gatling', ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imgPath:imgPath+'gatling.png'},
-	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-	{name:'Plasma-Gun Imprv.', ammo: '50', damage: 50, penetration: 5, range: 700, velocity:16, cooldown: 4, imgPath:imgPath+'plasma.png'},
-	{name:'Rocket', ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'rocket.png'},
+	{name:'Gatling', 		ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imagPath:imgPath+'gatling.png'},
+	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'plasma.png'},
+	{name:'Plasma-Gun Imprv.', ammo: 50, damage: 35, penetration: 5, range: 650, velocity:16, cooldown: 6, imagPath:imgPath+'plasma.png'},
+	{name:'EMP', 				ammo: 80, damage: 50, penetration: 5, range: 487, velocity:10, cooldown: 12, imagPath:imgPath+'EMP.png'},
+	{name:'Rocket', 		ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'rocket.png'},
+];
+
+var bonuses = [
+	{name: 'healing', 				time: 0, timeLeft:0, image: 0, addBonuses: function(obj){obj.hp += 100}, removeBonus: function(obj){}},
+	{name: 'shield', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){obj.shield+=100}, removeBonus: function(obj){}},
+	{name: 'PGIAmmo', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){projectiles[3].ammo += 50;}, removeBonus: function(obj){}},
 ];
 
 var playerAnim = [imgPath+'playerLeft.png',
@@ -31,6 +43,7 @@ function Player(){
 		this.input = [false, false, false, false, false];
 		this.weaponID = 0;
 		this.weaponCooldown = 0;
+		this.rocketCooldown = 0;
 		this.ammo = projectiles[0].ammo;
 		this.score = 13;
 		this.ammoText = io.addToGroup('GUI', new iio.Text('Ammo: ',20,30)
@@ -104,43 +117,43 @@ function Player(){
 	Player.prototype.updateInput = function(event, boolValue){
 			if(iio.keyCodeIs('a', event)){
 				this.input[LEFT] = boolValue;
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('d', event)){
 				this.input[RIGHT] = boolValue;
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('w', event)){
 				this.input[UP] = boolValue;
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('s', event)){
 				this.input[DOWN] = boolValue;
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('space', event)){
 				this.input[SPACE] = boolValue;
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('1', event)){
 				this.switchWeapon(0);
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('2', event)){
 				this.switchWeapon(1);
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('3', event)){
 				this.switchWeapon(2);
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('4', event)){
 				this.switchWeapon(3);
-			event.preventDefault();
+				event.preventDefault();
 			}
 			else if(iio.keyCodeIs('c', event)){
-				this.spawnRocket();
-			event.preventDefault();
+				this.input[ROCKET] = boolValue;
+				event.preventDefault();
 			}
 	}
 
@@ -167,15 +180,21 @@ function Player(){
 			this.setAnimFrame(2);
 		else this.setAnimFrame(1);
 		
-		if(this.input[SPACE] && this.weaponCooldown < 0 && (this.ammo > 0 || this.ammo == '∞')){
+		if(this.input[SPACE] && this.weaponCooldown <= 0 && (this.ammo > 0 || this.ammo == '∞')){
 			if(this.ammo != '∞')
 				this.ammo--;
 			this.fire(this.left()+15, this.pos.y, 0.5);
 			this.fire(this.right()-15, this.pos.y, -0.5);
 			this.weaponCooldown = projectiles[this.weaponID].cooldown;
 		}
-		else if(this.weaponCooldown > -1)
-			this.weaponCooldown--;
+	
+		if(this.input[ROCKET] && this.rocketCooldown <=0){
+			this.spawnRocket();
+			this.rocketCooldown = 25;
+		}
+		
+		this.weaponCooldown = Math.max(this.weaponCooldown-1, 0);
+		this.rocketCooldown = Math.max(this.rocketCooldown-1, 0);
 		
 		this.ammoText.setText('Ammo: '+this.ammo);
 		if(this.buff != null){

@@ -23,7 +23,7 @@ function main(IO){
 	}
 	for(i=0; i<projectiles.length; i++){
 		projectiles[i].image = new Image();
-		projectiles[i].image.src = projectiles[i].imgPath;
+		projectiles[i].image.src = projectiles[i].imagPath;
 	}
 	for(i=0; i<enemyProjectiles.length; i++){
 		enemyProjectiles[i].image = new Image();
@@ -85,43 +85,40 @@ function main(IO){
 		}
 	});
 	io.setCollisionCallback('explosion', 'enemy', function(explosion, enemy){
-		console.log(enemy.pos.x+' '+enemy.pos.y);
-		alert('hit')
 		player.getPoints(enemy.hp);
 		// enemy.hp -= explosion.dmg;
-		// enemy.hp -= 66;
+		enemy.hp -= 66;
 		
-		// if (enemy.hp < 0){
+		if (enemy.hp < 0){
 			dropBonus(enemy.pos.x, enemy.pos.y);
 			spawnExplosion(enemy.pos.x, enemy.pos.y);
 			rampage+=5;
 			io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
 				.enableKinematics()
 				.setBound('bottom', io.canvas.height+120)
-				// .createWithImage(scrapImage)
 				.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
 				.playAnim('scrap', 10, io)
 				.setLifetime(60/10*6)
 				.setVel(0, enemy.vel.y);
 			
 			io.rmvFromGroup(enemy, 'enemy');
-		// }
+		}
 	});
 	io.setCollisionCallback('player', 'enemy', function(player_, enemy){
 		enemy.hp -= 100;
-		player_.getHit(1);
-		if (enemy.hp < 0){
+		player_.getHit(50);
+		// if (enemy.hp < 0){
 			spawnExplosion(enemy.pos.x, enemy.pos.y);
+			rampage+=5;
 			io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
 				.enableKinematics()
 				.setBound('bottom', io.canvas.height+120)
-				// .createWithImage(scrapImage)
 				.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
 				.playAnim('scrap', 10, io)
 				.setLifetime(60/10*6)
 				.setVel(0, enemy.vel.y);
 			io.rmvFromGroup(enemy, 'enemy');
-		}
+		// }
 		if (player_.hp < 0){
 			// delete player.owner.handle;
 			// delete player.owner;
@@ -132,7 +129,6 @@ function main(IO){
 			
 			io.rmvFromGroup(bonus, 'bonus');
 	});
-	
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
 			
 			player_.getHit(elaser.dmg);

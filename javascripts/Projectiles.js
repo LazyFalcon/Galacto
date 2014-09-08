@@ -6,12 +6,6 @@
 */
 var imgPath = 'img/';
 var fps = 60;
-
-var LEFT = 0;
-var RIGHT = 1;
-var UP = 2;
-var DOWN = 3;
-var SPACE = 4;
 var io;
 
 var player;
@@ -22,11 +16,7 @@ var quit = false;
 
 
 
-var bonuses = [
-	{name: 'healing', 				time: 0, timeLeft:0, image: 0, addBonuses: function(obj){obj.hp += 100}, removeBonus: function(obj){}},
-	{name: 'fasterShooting', 	time: 120, timeLeft:0, image: 0, addBonuses: function(obj){obj.cooldown}, removeBonus: function(obj){}},
-	{name: 'shield', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){obj.shield+=100}, removeBonus: function(obj){obj.shield = 0;}},
-];
+
 
 var LostGame = function(text){
 	quit = true;
@@ -91,38 +81,41 @@ function Rocket(){
 		
 		var enemies = io.getGroup('enemy');
 		this.velocity = 10;
-		this.target = enemies[enemies.length-1];
+		this.target = null;
+		if(enemies.length > 0)
+			this.target = enemies[enemies.length-1];
+	
 		this.enableKinematics();
-		this.setVel(0,-3);
+		this.setVel(0,-this.velocity);
 		this.setBounds(-40, io.canvas.width+40, io.canvas.height+40, -40);
-		
+		this.cooldown = 3;
 		
 	}
 
 	Rocket.prototype.updateSI = function(){
-		var angle = Math.atan2(this.target.pos.x - this.pos.x, this.pos.y-this.target.pos.y);
-		this.rotation = angle;
-		this.setVel(Math.sin(this.rotation)*this.velocity,-Math.cos(this.rotation)*this.velocity);
-		
-		if(this.pos.distance(this.target.pos) < 50){
-			this.explode();
-			return true;
+		this.cooldown = Math.max(this.cooldown-1, 0);
+		if(this.target == null && io.getGroup('enemy').length > 0)
+			this.target = io.getGroup('enemy')[io.getGroup('enemy').length-1];
+			
+		if(this.cooldown == 0){
+			var angle = Math.atan2(this.target.pos.x - this.pos.x-40, this.pos.y-this.target.pos.y);
+			this.rotation = angle;
+			this.setVel(Math.sin(this.rotation)*this.velocity,-Math.cos(this.rotation)*this.velocity);
+			
+			if(this.pos.distance(this.target.pos) < 70){
+				this.explode();
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	Rocket.prototype.explode = function(){
-		io.addToGroup('limitedLifetime',new iio.SimpleRect(this.pos.x,this.pos.y))
+		io.addToGroup('explosion',new iio.SimpleRect(this.pos.x,this.pos.y,75)
 				.createWithAnim(explosionAnim.getSprite(0,6),'kaboom',0)
 				.enableKinematics()
 				.playAnim('kaboom', 20, io)
-				.setLifetime(60/20*7);
-		io.addToGroup('explosion', new iio.Circle(this.pos.x,this.pos.y, 75))
-				.enableKinematics()
-				.shrink(.2)
-				.setStrokeStyle('red', 2);
-				// .setLifetime(60/20*7);
-		// io.rmvFromGroup(this, 'rockets');
+				.setLifetime(60/20*7));
 	}
 
 
