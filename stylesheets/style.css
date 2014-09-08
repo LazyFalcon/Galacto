@@ -27,8 +27,6 @@ time, mark, audio, video {
     }
 		
 canvas {
-	width:800px;
-	height:700px;
 	padding-left: 0;
 	padding-right: 0;
 	margin-left: auto;

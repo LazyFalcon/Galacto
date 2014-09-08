@@ -20,10 +20,7 @@ var explosionAnim;
 var bonusImg;
 var quit = false;
 
-var projectiles = [
-	{name:'Gatling', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imgPath:imgPath+'gatling.png'},
-	{name:'Plasma-Gun', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
-];
+
 
 var bonuses = [
 	{name: 'healing', 				time: 0, timeLeft:0, image: 0, addBonuses: function(obj){obj.hp += 100}, removeBonus: function(obj){}},
@@ -79,4 +76,33 @@ function Projectile(){
 		this._super.SimpleRect.call(this,x,y);
 		this.dmg = damage;
 	}
+
+	
+	
+function Rocket(){
+	this.Rocket.apply(this, arguments);
+}
+
+	iio.inherit(Rocket, iio.Rect);
+	Rocket.prototype._super = iio.SimpleRect.prototype;
+	Rocket.prototype.Rocket = function(x,y){
+		
+		this._super.Rect.call(this,x,y,10,10);
+		var enemies = io.getGroup('enemy');
+		this.velocity = 30;
+		this.target = enemies[enemies.length-1];
+		this.setVel(0,-30);
+		this.enableKinematics();
+		this.setBound('top', -40);
+		
+		
+		
+	}
+
+		Rocket.prototype.updateSI = function(){
+			this.setTorque(0.01);
+		}
+
+
+
 

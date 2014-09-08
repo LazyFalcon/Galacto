@@ -32,6 +32,7 @@ function main(IO){
 
 	
 	io.addGroup('lasers');
+	io.addGroup('rockets');
 	io.addGroup('elasers');
 	io.addGroup('player');
 	io.addGroup('enemy');
@@ -111,7 +112,7 @@ function main(IO){
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
 			
 			player_.getHit(elaser.dmg);
-			io.rmvFromGroup(elasers, 'elasers');
+			io.rmvFromGroup(elaser, 'elasers');
 	});
 	// io.setCollisionCallback('lasers', 'elasers', function(laser, elaser){
 			
@@ -121,11 +122,13 @@ function main(IO){
 	
 	
 	
-	rampageText = io.addToGroup('GUI', new iio.Text('Rampage: '+rampage,200,15)
+	rampageText = io.addToGroup('GUI', new iio.Text('Rampage: '+rampage,io.canvas.width/2,15)
 						.setFont('18px Consolas')
+						.setTextAlign('center')
 						.setFillStyle('white'));
 						
-						
+	var e1 = 0;
+	var e2 = 5;
 	var timer = 200;
 	var release = iio.getRandomInt(7,1);
 	io.setFramerate(60, function(){
@@ -139,12 +142,25 @@ function main(IO){
 			rampageText.setText('Rampage: '+Math.round(rampage)+'%');
 		}
 		player.updatePlayer();
-		var enemies = io.getGroup('enemy');
-		var enemyCount = enemies.length;
-		for(var i=0; i<enemyCount; i++){
-			enemies[i].updateSI();
-		}
 		
+		e1--;
+		e2--;
+		if(e1 <= 0){
+			var enemies = io.getGroup('enemy');
+			var enemyCount = enemies.length;
+			for(var i=0; i<enemyCount; i++){
+				enemies[i].updateSI();
+			}
+			e1 = 10;
+		}
+		if(e2 <= 0){
+			var rockets = io.getGroup('rockets');
+			var rocketsCount = rockets.length;
+			for(var i=0; i<rocketsCount; i++){
+				rockets[i].updateSI();
+			}
+			e2 = 10;
+		}
 		timer++;
 		
 		if(timer > release){
