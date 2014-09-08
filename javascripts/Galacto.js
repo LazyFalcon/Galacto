@@ -1,4 +1,4 @@
-
+﻿
 function main(IO){
 	io = IO;
 	var rampage = 0;
@@ -37,6 +37,7 @@ function main(IO){
 	io.addGroup('player');
 	io.addGroup('enemy');
 	io.addGroup('bonus');
+	io.addGroup('explosion');
 	setBackground();
 	player = io.addToGroup('player', new Player(io.canvas.center.x, io.canvas.height-100, 'Dez'));
 
@@ -83,6 +84,29 @@ function main(IO){
 			io.rmvFromGroup(enemy, 'enemy');
 		}
 	});
+	io.setCollisionCallback('explosion', 'enemy', function(explosion, enemy){
+		console.log(enemy.pos.x+' '+enemy.pos.y);
+		alert('hit')
+		player.getPoints(enemy.hp);
+		// enemy.hp -= explosion.dmg;
+		// enemy.hp -= 66;
+		
+		// if (enemy.hp < 0){
+			dropBonus(enemy.pos.x, enemy.pos.y);
+			spawnExplosion(enemy.pos.x, enemy.pos.y);
+			rampage+=5;
+			io.addToGroup('limitedLifetime', new iio.SimpleRect(enemy.pos))
+				.enableKinematics()
+				.setBound('bottom', io.canvas.height+120)
+				// .createWithImage(scrapImage)
+				.createWithAnim(scrapAnim.getSprite(0,5),'scrap',0)
+				.playAnim('scrap', 10, io)
+				.setLifetime(60/10*6)
+				.setVel(0, enemy.vel.y);
+			
+			io.rmvFromGroup(enemy, 'enemy');
+		// }
+	});
 	io.setCollisionCallback('player', 'enemy', function(player_, enemy){
 		enemy.hp -= 100;
 		player_.getHit(1);
@@ -123,7 +147,7 @@ function main(IO){
 	
 	
 	rampageText = io.addToGroup('GUI', new iio.Text('Rampage: '+rampage,io.canvas.width/2,15)
-						.setFont('18px Consolas')
+						.setFont('18px Impact')
 						.setTextAlign('center')
 						.setFillStyle('white'));
 						
@@ -156,8 +180,14 @@ function main(IO){
 		if(e2 <= 0){
 			var rockets = io.getGroup('rockets');
 			var rocketsCount = rockets.length;
+			var toDel = [];
 			for(var i=0; i<rocketsCount; i++){
-				rockets[i].updateSI();
+				if(rockets[i].updateSI())
+					toDel.push(rockets[i]);
+			}
+			
+			for(var i=0; i<toDel.length; i++){
+				io.rmvFromGroup(toDel[i], 'rockets');
 			}
 			e2 = 10;
 		}

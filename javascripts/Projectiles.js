@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 	co zosta³o do zrobienia?
 	-rampage
 	-bonusy
@@ -84,24 +84,46 @@ function Rocket(){
 }
 
 	iio.inherit(Rocket, iio.Rect);
-	Rocket.prototype._super = iio.SimpleRect.prototype;
+	Rocket.prototype._super = iio.Rect.prototype;
 	Rocket.prototype.Rocket = function(x,y){
 		
 		this._super.Rect.call(this,x,y,10,10);
-		var enemies = io.getGroup('enemy');
-		this.velocity = 30;
-		this.target = enemies[enemies.length-1];
-		this.setVel(0,-30);
-		this.enableKinematics();
-		this.setBound('top', -40);
 		
+		var enemies = io.getGroup('enemy');
+		this.velocity = 10;
+		this.target = enemies[enemies.length-1];
+		this.enableKinematics();
+		this.setVel(0,-3);
+		this.setBounds(-40, io.canvas.width+40, io.canvas.height+40, -40);
 		
 		
 	}
 
-		Rocket.prototype.updateSI = function(){
-			this.setTorque(0.01);
+	Rocket.prototype.updateSI = function(){
+		var angle = Math.atan2(this.target.pos.x - this.pos.x, this.pos.y-this.target.pos.y);
+		this.rotation = angle;
+		this.setVel(Math.sin(this.rotation)*this.velocity,-Math.cos(this.rotation)*this.velocity);
+		
+		if(this.pos.distance(this.target.pos) < 50){
+			this.explode();
+			return true;
 		}
+		return false;
+	}
+	
+	Rocket.prototype.explode = function(){
+		io.addToGroup('limitedLifetime',new iio.SimpleRect(this.pos.x,this.pos.y))
+				.createWithAnim(explosionAnim.getSprite(0,6),'kaboom',0)
+				.enableKinematics()
+				.playAnim('kaboom', 20, io)
+				.setLifetime(60/20*7);
+		io.addToGroup('explosion', new iio.Circle(this.pos.x,this.pos.y, 75))
+				.enableKinematics()
+				.shrink(.2)
+				.setStrokeStyle('red', 2);
+				// .setLifetime(60/20*7);
+		// io.rmvFromGroup(this, 'rockets');
+	}
 
 
 

@@ -1,4 +1,4 @@
-var enemyProjectiles = [
+﻿var enemyProjectiles = [
 	{name:'Gatling', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 13, imgPath:imgPath+'gatling.png'},
 	{name:'Plasma-Gun', damage: 15, penetration: 5, range: 700, velocity:16, cooldown: 28, imgPath:imgPath+'plasmaEnemy.png'},
 ];

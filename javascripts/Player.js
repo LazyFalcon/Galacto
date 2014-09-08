@@ -1,4 +1,4 @@
-
+﻿
 var projectiles = [
 	{name:'Gatling', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imgPath:imgPath+'gatling.png'},
 	{name:'Plasma-Gun', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imgPath:imgPath+'plasma.png'},
@@ -34,24 +34,28 @@ function Player(){
 		this.ammo = 50;
 		this.score = 13;
 		this.ammoText = io.addToGroup('GUI', new iio.Text('Ammo: ',20,30)
-						.setFont('18px Consolas')
+						.setFont('18px Impact')
 						.setFillStyle('white'));
 		this.hpText = io.addToGroup('GUI', new iio.Text('HP: '+this.hp,20,15)
-						.setFont('18px Consolas')
+						.setFont('18px Impact')
 						.setFillStyle('red'));
 		this.lives = 3;
-		this.livesText = io.addToGroup('GUI', new iio.Text('<3: '+this.lives,100,15)
-						.setFont('18px Consolas')
-						.setFillStyle('green'));
+		var slives='';
+		for(var i=0; i< this.lives; i++)
+			slives += '♥';
+		// this.livesText = io.addToGroup('GUI', new iio.Text('♥: '+this.lives,100,15)
+		this.livesText = io.addToGroup('GUI', new iio.Text(slives,100,15)
+						.setFont('18px Impact')
+						.setFillStyle('red'));
 		this.scoreText = io.addToGroup('GUI', new iio.Text('Score: '+this.score,io.canvas.width - 20,15)
-						.setFont('18px Consolas')
+						.setFont('18px Impact')
 						.setTextAlign('right')
 						.setFillStyle('yellow'));
 		this.buff = null;
 		
 		this.shield = 100;
 		this.shieldText = io.addToGroup('GUI', new iio.Text('shield: '+this.shield+'%',20,45)
-						.setFont('18px Consolas')
+						.setFont('18px Impact')
 						.setFillStyle('blue'));
 	}
 
@@ -67,7 +71,11 @@ function Player(){
 		if(this.hp == 0){
 			this.hp = 100;
 			this.lives--;
-			this.livesText.setText('<3: '+this.lives);
+			
+			var slives='';
+			for(var i=0; i< this.lives; i++)
+				slives += '♥';
+			this.livesText.setText(slives);
 			if(this.lives == 0)
 				LostGame('ur noob!!! lolz!!');
 		}
