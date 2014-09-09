@@ -614,7 +614,7 @@ var iio = {};
       if (typeof ctx!='undefined') obj.draw(ctx);
       return this.enableUpdates();
    }
-   Obj.prototype.enableUpdates = function(fn, fnParams){
+	 Obj.prototype.enableUpdates = function(fn, fnParams){
       this._update=this.update;
       if (typeof this._update!='undefined')
          this.update=function(dt){
@@ -622,6 +622,7 @@ var iio = {};
          }
       else {
          this.update=function(dt){
+				 // console.log('caling update fun');
             if (typeof this.objs!='undefined')
                for (var i=0;i<this.objs.length;i++){
                   if (typeof this.objs[i].update!='undefined')
@@ -1814,6 +1815,10 @@ var iio = {};
    }
 })();
 
+// var callTrue = function(){
+	// return true;
+// }
+
 //iio Kinematics Engine
 (function(){
    function updateProperties(obj,dt){
@@ -1842,7 +1847,6 @@ var iio = {};
                return false;
          }  
       }
-			// if(obj.lifetime != 'undefined' && obj.lifetime > 0){
 			if(obj.lifetime != 'undefined' ){
 				obj.lifetime--;
 				if(obj.lifetime <= 0){
@@ -1879,7 +1883,8 @@ var iio = {};
             return false;
          }
       }
-      return true;
+      // return true;
+      return obj.onUpdate();
    }
    function setVel(v,y){
       this.vel = new iio.Vec(v,y);
@@ -1945,8 +1950,14 @@ var iio = {};
       this.lifetime = s;
       return this;
    }
-   function enableKinematics(){
+   function enableKinematics(fn){
       //this.update=updateProperties;
+			if(typeof fn != 'undefined')
+				this.onUpdate = fn;
+			else 
+				this.onUpdate = function(){
+					return true;
+				};
       this.enableUpdates(updateProperties);
       this.setVel=setVel;
       this.setAcc=setAcc;

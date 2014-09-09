@@ -135,14 +135,10 @@ function main(IO){
 		}
 	});
 	io.setCollisionCallback('player', 'bonus', function(player_, bonus){
-			bonuses[bonus.id].useBonus(player_);
-			// io.addGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2)
-						// .setFont('18px Impact')
-						// .setTextAlign('center')
-						// .setFillStyle('red'));
-	textLifetime = 60;
-	io.rmvFromGroup(bonusText, 'GUI');
-	bonusText = io.addToGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2),-20)
+		bonuses[bonus.id].useBonus(player_);
+		textLifetime = 60;
+		io.rmvFromGroup(bonusText, 'GUI');
+		bonusText = io.addToGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2),-20)
 						.setFillStyle('red')
 						.setFont('58px Impact')
 						.setTextAlign('center')
@@ -155,26 +151,18 @@ function main(IO){
 							}
 							return true;
 						})
-			io.rmvFromGroup(bonus, 'bonus');
+		io.rmvFromGroup(bonus, 'bonus');
 	});
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
 			
 			player_.getHit(elaser.dmg);
 			io.rmvFromGroup(elaser, 'elasers');
 	});
-	// io.setCollisionCallback('lasers', 'elasers', function(laser, elaser){
-			
-			// io.rmvFromGroup(elasers, 'elasers');
-			// io.rmvFromGroup(laser, 'lasers');
-	// });
-	
-	
 	
 	rampageText = io.addToGroup('GUI', new iio.Text('•Rampage•',io.canvas.width/2,15)
 						.setFont('18px Impact')
 						.setTextAlign('center')
 						.setFillStyle('white'));
-						
 	var e1 = 0;
 	var e2 = 5;
 	var timer = 200;
@@ -194,32 +182,8 @@ function main(IO){
 			// rampageText.setText('Rampage: '+Math.round(rampage)+'%');
 			rampageText.setText(str);
 		}
-		player.updatePlayer();
+		// player.updatePlayer();
 		
-		e1--;
-		e2--;
-		if(e1 <= 0){
-			var enemies = io.getGroup('enemy');
-			var enemyCount = enemies.length;
-			for(var i=0; i<enemyCount; i++){
-				enemies[i].updateSI();
-			}
-			e1 = 10;
-		}
-		if(e2 <= 0){
-			var rockets = io.getGroup('rockets');
-			var rocketsCount = rockets.length;
-			var toDel = [];
-			for(var i=0; i<rocketsCount; i++){
-				if(rockets[i].updateSI())
-					toDel.push(rockets[i]);
-			}
-			
-			for(var i=0; i<toDel.length; i++){
-				io.rmvFromGroup(toDel[i], 'rockets');
-			}
-			e2 = 10;
-		}
 		timer++;
 		
 		if(timer > release){
@@ -227,12 +191,7 @@ function main(IO){
 			release = iio.getRandomInt(30,50);
 			var x = iio.getRandomInt(30,io.canvas.width-30);
 			var y = iio.getRandomInt(-50,-100);
-				io.addToGroup('enemy', new Enemy(x,y,iio.getRandomInt(0,enemyStats.length)));
-				// .setBounds(null, io.canvas.width-50, null, 50, function(obj){
-					// obj.vel.x = 0;
-					// return true;
-				// });
-				// io.addToGroup('enemy', new Enemy(x,y,1));
+				var tmp_en = io.addToGroup('enemy', new Enemy(x,y,iio.getRandomInt(0,enemyStats.length)))
 			}
 	});
 }

@@ -107,7 +107,7 @@ var dropBonus = function(x,y){
 	var tmp = io.addToGroup('bonus',new iio.SimpleRect(x,y))
 			.createWithImage(bonuses[bonus].image)
 			.enableKinematics()
-			.setVel(0, 8)
+			.setVel(0, 4)
 			.setBound('bottom', io.canvas.height+120);
 	tmp.id = bonus;
 }
@@ -129,6 +129,7 @@ function Player(){
 		this._super.SimpleRect.call(this,x,y);
 		
 		this.createWithAnim(playerAnim,1);
+		this.enableKinematics(function(){this.updatePlayer(); return true;});
 		
 		this.hp = 100;
 		this.name = newName;
@@ -259,7 +260,7 @@ function Player(){
 	}
 
 	Player.prototype.updatePlayer = function(){
-		
+		// console.log('!');
 		//update position
 		if (this.input[LEFT] && !this.input[RIGHT]
 				&& this.pos.x - this.width/2> 0)

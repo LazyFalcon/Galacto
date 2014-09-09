@@ -36,7 +36,7 @@ function Enemy(){
 
 		this.hp = enemyStats[type].hp;
 		
-		this.enableKinematics();
+		this.enableKinematics(function(){this.updateSI(); return true;});
 		this.setBound('bottom', io.canvas.height+120);
 		this.createWithImage(enemyImag[type]);
 		this.setVel(0,iio.getRandomInt(5,8));
@@ -45,6 +45,7 @@ function Enemy(){
 	}
 	
 	Enemy.prototype.updateSI = function(){
+		// console.log(this.pos.x);
 		this.weaponCooldown = Math.max(this.weaponCooldown-1,0);
 		if(Math.abs(this.pos.x - player.pos.x) < 100){
 			if(!this.dodge)

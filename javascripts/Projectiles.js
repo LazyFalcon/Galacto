@@ -81,7 +81,7 @@ function Rocket(){
 		if(enemies.length > 0)
 			this.target = enemies[enemies.length-1];
 	
-		this.enableKinematics();
+		this.enableKinematics(function(){return this.updateSI();});
 		this.setVel(0,-this.velocity);
 		this.setBounds(-40, io.canvas.width+40, io.canvas.height+40, -40);
 		this.cooldown = 3;
@@ -100,10 +100,10 @@ function Rocket(){
 			
 			if(this.pos.distance(this.target.pos) < 70){
 				this.explode();
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	Rocket.prototype.explode = function(){
