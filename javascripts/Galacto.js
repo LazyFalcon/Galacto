@@ -109,11 +109,11 @@ var mainApp = function(){
 				.setVel(0, enemy.vel.y);
 			io.rmvFromGroup(enemy, 'enemy');
 		// }
-		if (player_.hp < 0){
+		// if (player_.hp < 0){
 			// delete player.owner.handle;
 			// delete player.owner;
 				// io.rmvFromGroup(player, 'player');
-		}
+		// }
 	});
 	io.setCollisionCallback('player', 'bonus', function(player_, bonus){
 		bonuses[bonus.id].useBonus(player_);
