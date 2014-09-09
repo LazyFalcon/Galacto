@@ -6,7 +6,7 @@ var SPACE = 4;
 var ROCKET = 5;
 
 var projectiles = [
-	{name:'gatling', 		ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3},
+	{name:'Gatling', 		ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3},
 	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8},
 	{name:'Plasma-Gun Imprv', ammo: 50, damage: 35, penetration: 5, range: 650, velocity:16, cooldown: 6},
 	{name:'EMP', 				ammo: 80, damage: 50, penetration: 5, range: 487, velocity:10, cooldown: 12},
@@ -86,7 +86,7 @@ projectiles[4].fire = function(obj){
 }
 	
 var rockets = [
-	{name:'rocket', 		ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'rocket.png'},
+	{name:'Rocket', 		ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'rocket.png'},
 	{name:'AtomicRocket', 		ammo: 1, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'rocket.png'},
 ];	
 
