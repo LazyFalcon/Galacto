@@ -177,8 +177,12 @@ function main(IO){
 	laserFlashImg = new Image();
 	
 	scrapImage.onload = function(){
+		scrapAnim = new iio.SpriteMap(scrapImage,140,140);
+	
 		console.log('scrap');
 		image90.onload = function(){
+		
+			explosionAnim = new iio.SpriteMap(image90,100,100);
 			console.log('kaboom');
 			laserFlashImg.onload = function(){
 				console.log('flash');
@@ -194,10 +198,8 @@ function main(IO){
 			laserFlashImg.src = imgPath+'laserRedShot.png';
 		}
 		image90.src = imgPath+'explosion.png';
-	explosionAnim = new iio.SpriteMap(image90,100,100);
 	}
 	scrapImage.src = imgPath+'enemyScrap.png';
-	scrapAnim = new iio.SpriteMap(scrapImage,140,140);
 	
 	
 		
