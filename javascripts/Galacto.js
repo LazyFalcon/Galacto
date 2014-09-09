@@ -4,12 +4,14 @@ var fps = 60;
 var loadImages = function(obj, callback){
 	var len = obj.length;
 	var loaded = 0;
+	// console.log(typeof callback);
 	for(var i=0; i<len; i++){
 		// console.log('loading '+obj[i].name);
 		obj[i].image = new Image();
 		obj[i].image.onload = function(){
 			if(++loaded >= len-1){
 				loaded=-2;
+				// alert('loaded');
 				callback();
 			}
 				
@@ -18,7 +20,7 @@ var loadImages = function(obj, callback){
 		};
 }
 
-var mainApp = function(){
+var MainGame = function(){
 
 	var rampage = 0;
 	io.addGroup('lasers');
@@ -171,24 +173,35 @@ function main(IO){
 	// io.activateDebugger();
 	
 	var scrapImage = new Image();
+	var image90 = new Image();
+	laserFlashImg = new Image();
+	
+	scrapImage.onload = function(){
+		console.log('scrap');
+		image90.onload = function(){
+			console.log('kaboom');
+			laserFlashImg.onload = function(){
+				console.log('flash');
+				
+				statement('Prepare');
+				
+				loadImages(enemyStats,
+					loadImages(enemyProjectiles,
+						loadImages(projectiles,
+						loadImages(rockets,
+							loadImages(bonuses, function(){MainGame()})))));
+			}
+			laserFlashImg.src = imgPath+'laserRedShot.png';
+		}
+		image90.src = imgPath+'explosion.png';
+	explosionAnim = new iio.SpriteMap(image90,100,100);
+	}
 	scrapImage.src = imgPath+'enemyScrap.png';
 	scrapAnim = new iio.SpriteMap(scrapImage,140,140);
 	
-	laserFlashImg = new Image();
-	laserFlashImg.src = imgPath+'laserRedShot.png';
-	image90 = new Image();
-	image90.src = imgPath+'explosion.png';
-	explosionAnim = new iio.SpriteMap(image90,100,100);
 	
 		
 	
-	statement('Prepare');
-	
-	loadImages(enemyStats,
-		loadImages(enemyProjectiles,
-			loadImages(projectiles,
-			loadImages(rockets,
-				loadImages(bonuses, mainApp)))));
 }
 
 
