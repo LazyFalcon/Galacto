@@ -5,13 +5,12 @@ var DOWN = 3;
 var SPACE = 4;
 var ROCKET = 5;
 
-
 var projectiles = [
-	{name:'Gatling', 		ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3, imagPath:imgPath+'gatling.png'},
-	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'plasma.png'},
-	{name:'Plasma-Gun Imprv.', ammo: 50, damage: 35, penetration: 5, range: 650, velocity:16, cooldown: 6, imagPath:imgPath+'plasma.png'},
-	{name:'EMP', 				ammo: 80, damage: 50, penetration: 5, range: 487, velocity:10, cooldown: 12, imagPath:imgPath+'emp.png'},
-	{name:'Kinetic Sand', 		ammo: 80, damage: 3, penetration: 5, range: 487, velocity:40, cooldown: 12, imagPath:imgPath+'kineticSand.png'},
+	{name:'Gatling', 		ammo: '∞', damage: 4, penetration: 10, range: 500, velocity:25, cooldown: 3},
+	{name:'Plasma-Gun', ammo: '∞', damage: 20, penetration: 5, range: 700, velocity:16, cooldown: 8},
+	{name:'Plasma-Gun Imprv', ammo: 50, damage: 35, penetration: 5, range: 650, velocity:16, cooldown: 6},
+	{name:'emp', 				ammo: 80, damage: 50, penetration: 5, range: 487, velocity:10, cooldown: 12},
+	{name:'Kinetic Sand', 		ammo: 80, damage: 3, penetration: 5, range: 487, velocity:40, cooldown: 12},
 ];
 
 projectiles[0].fire = function(obj){

@@ -1,45 +1,26 @@
 ﻿
-function main(IO){
-	io = IO;
-	// io.activateDebugger();
-	
-	var rampage = 0;
-	var scrapImage = new Image();
-	scrapImage.src = imgPath+'enemyScrap.png';
-	var scrapAnim = new iio.SpriteMap(scrapImage,140,140);
-	
-	var laserFlashImg = new Image();
-	laserFlashImg.src = imgPath+'laserRedShot.png';
-	var image90 = new Image();
-	image90.src = imgPath+'explosion.png';
-	explosionAnim = new iio.SpriteMap(image90,100,100);
-	
-	bonusImg = new Image();
-	bonusImg.src = imgPath+'bonus.png';
-	
-	for(i=0; i<enemyImagPath.length; i++){
-		enemyImag[i] = new Image();
-		enemyImag[i].src = enemyImagPath[i];
-		
-	}
-	for(i=0; i<projectiles.length; i++){
-		projectiles[i].image = new Image();
-		projectiles[i].image.src = projectiles[i].imagPath;
-	}
-	for(i=0; i<rockets.length; i++){
-		rockets[i].image = new Image();
-		rockets[i].image.src = rockets[i].imagPath;
-	}
-	for(i=0; i<enemyProjectiles.length; i++){
-		enemyProjectiles[i].image = new Image();
-		enemyProjectiles[i].image.src = enemyProjectiles[i].imgPath;
-	}
-	for(i=0; i<bonuses.length; i++){
-		bonuses[i].image = new Image();
-		bonuses[i].image.src = imgPath+bonuses[i].name+'.png';
-	}
+var fps = 60;
 
-	
+var loadImages = function(obj, callback){
+	var len = obj.length;
+	var loaded = 0;
+	for(var i=0; i<len; i++){
+		// console.log('loading '+obj[i].name);
+		obj[i].image = new Image();
+		obj[i].image.onload = function(){
+			if(++loaded >= len-1){
+				loaded=-2;
+				callback();
+			}
+				
+		}
+		obj[i].image.src = imgPath+obj[i].name+'.png';
+		};
+}
+
+var mainApp = function(){
+
+	var rampage = 0;
 	io.addGroup('lasers');
 	io.addGroup('rockets');
 	io.addGroup('elasers');
@@ -62,7 +43,7 @@ function main(IO){
 		player.updateInput(event, false);
 	});
 	
-	bonusText = null;
+	// bonusText = null;
 	
 	io.setCollisionCallback('lasers', 'enemy', function(laser, enemy){
 		player.getPoints(14);
@@ -136,21 +117,7 @@ function main(IO){
 	});
 	io.setCollisionCallback('player', 'bonus', function(player_, bonus){
 		bonuses[bonus.id].useBonus(player_);
-		textLifetime = 60;
-		io.rmvFromGroup(bonusText, 'GUI');
-		bonusText = io.addToGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2),-20)
-						.setFillStyle('red')
-						.setFont('58px Impact')
-						.setTextAlign('center')
-						.enableUpdates(function(){
-							textLifetime--;
-							bonusText.styles.alpha = textLifetime/60;
-							if(textLifetime<=0){
-								io.rmvFromGroup(this, 'GUI');
-								return false;
-							}
-							return true;
-						})
+		statement(bonuses[bonus.id].text);
 		io.rmvFromGroup(bonus, 'bonus');
 	});
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
@@ -165,13 +132,17 @@ function main(IO){
 						.setFillStyle('white'));
 	var e1 = 0;
 	var e2 = 5;
-	var timer = 200;
-	var release = iio.getRandomInt(7,1);
+	var t1 = 0;
+	var release = 0 
+	
+	statement('Prepare');
 	io.setFramerate(60, function(){
 		if(quit)
 			io.cancelFramerate();
 		if(rampage >= 100){
+			statement('✠RAMPAGE✠');
 			rampageText.setText('Rampage');
+			rampage = 0;
 		}
 		else{
 			var tmp = Math.round(rampage/10);
@@ -179,21 +150,47 @@ function main(IO){
 			for(var i=0; i<tmp; i++)
 				str += '•';
 			rampage = Math.max(0, rampage - 0.05);
-			// rampageText.setText('Rampage: '+Math.round(rampage)+'%');
 			rampageText.setText(str);
 		}
-		// player.updatePlayer();
 		
-		timer++;
+		t1++;
 		
-		if(timer > release){
-			timer = 0;
+		if(t1 > release){
+			t1 = 0;
 			release = iio.getRandomInt(30,50);
 			var x = iio.getRandomInt(30,io.canvas.width-30);
 			var y = iio.getRandomInt(-50,-100);
 				var tmp_en = io.addToGroup('enemy', new Enemy(x,y,iio.getRandomInt(0,enemyStats.length)))
 			}
 	});
+
+}
+
+function main(IO){
+	io = IO;
+	// io.activateDebugger();
+	
+	var scrapImage = new Image();
+	scrapImage.src = imgPath+'enemyScrap.png';
+	scrapAnim = new iio.SpriteMap(scrapImage,140,140);
+	
+	laserFlashImg = new Image();
+	laserFlashImg.src = imgPath+'laserRedShot.png';
+	image90 = new Image();
+	image90.src = imgPath+'explosion.png';
+	explosionAnim = new iio.SpriteMap(image90,100,100);
+	
+	bonusImg = new Image();
+	bonusImg.src = imgPath+'bonus.png';
+		
+	
+	statement('Prepare');
+	
+	loadImages(enemyStats,
+		loadImages(enemyProjectiles,
+			loadImages(projectiles,
+			loadImages(rockets,
+				loadImages(bonuses, mainApp)))));
 }
 
 

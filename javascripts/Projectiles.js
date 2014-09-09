@@ -7,7 +7,6 @@
 var collection328 =' ☢ ☣ ♠ ♣ ♥ ♦ ♧ ♨ ♩ ♪ ♫ ♬ | ᚠ ᚡ ᚢ ᚣ ᚤ ᚥ ᚦ ᚧ ᚨ ᚩ ᚪ ᚫ ᚬ ᚭ ᚮ ᚯ ᚰ ᚱ ᚲ ᚳ ᚴ ᚵ ᚶ ᚷ ᚸ ᚹ ᚺ ᚻ ᚼ ᚽ ᚾ ᚿ | ↺ ↻ ∞ ➠ ➡ ➢ ➣ ➤ ➥ ➦ ➧ ➨ ➩ ➪ ➫ ➬ ➭ ➮ ➯ ➰ ➱ ➲ ➳ ➴ ➵ ➶ ➷ ➸ ➹ ➺ ➻ ➼ ➽ ➾   ✉ ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✨ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ ✹ ✺ ✻ ✼ ✽ ✾ ✿ ';
 
 var imgPath = 'img/';
-var fps = 60;
 var io;
 
 var player;
@@ -15,7 +14,7 @@ var player;
 var explosionAnim;
 var bonusImg;
 var quit = false;
-
+var statementObj = null;
 
 
 
@@ -28,7 +27,24 @@ var LostGame = function(text){
 						.setFillStyle('red'),-20);
 }
 
-
+var statement = function(text){
+		statementLifetime = 60;
+		io.rmvFromGroup(statementObj, 'GUI');
+		statementObj = io.addToGroup('GUI', new iio.Text(text,io.canvas.width/2,io.canvas.height/2),-20)
+						.setFillStyle('red')
+						.setFont('58px Impact')
+						.setTextAlign('center')
+						.enableUpdates(function(){
+							statementLifetime--;
+							statementObj.styles.alpha = statementLifetime/60;
+							if(statementLifetime<=0){
+								io.rmvFromGroup(this, 'GUI');
+								return false;
+							}
+							return true;
+						})
+		return statementObj;
+}
 
 var spawnExplosion = function(x_,y_){
 	var count = iio.getRandomInt(3,5);
