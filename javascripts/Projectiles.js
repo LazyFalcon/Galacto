@@ -15,8 +15,8 @@ var explosionAnim;
 var bonusImg;
 var quit = false;
 var statementObj = null;
-
-
+var statementQueue = [];
+var statementLifetime = 0;
 
 
 var LostGame = function(text){
@@ -27,7 +27,12 @@ var LostGame = function(text){
 						.setFillStyle('red'),-20);
 }
 
-var statement = function(text){
+// calback jeśli kolejny text za wcześnie
+var statement = function(){
+		// statementQueue.push(text);
+		if(statementLifetime > 15 || statementQueue.length == 0)
+			return true;
+		text = statementQueue.shift();
 		statementLifetime = 60;
 		io.rmvFromGroup(statementObj, 'GUI');
 		statementObj = io.addToGroup('GUI', new iio.Text(text,io.canvas.width/2,io.canvas.height/2),-20)
@@ -38,12 +43,12 @@ var statement = function(text){
 							statementLifetime--;
 							statementObj.styles.alpha = statementLifetime/60;
 							if(statementLifetime<=0){
-								io.rmvFromGroup(this, 'GUI');
+								// io.rmvFromGroup(this, 'GUI');
 								return false;
 							}
 							return true;
 						})
-		return statementObj;
+		return false;
 }
 
 var spawnExplosion = function(x_,y_){
@@ -59,11 +64,6 @@ var spawnExplosion = function(x_,y_){
 				.setLifetime(60/20*7);
 
 	}
-}
-
-setBackground = function(){
-	io.setBGColor('#0c0c0e');
-	
 }
 
 

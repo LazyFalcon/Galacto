@@ -1,6 +1,12 @@
 ﻿
 var fps = 60;
 
+setBackground = function(){
+	io.setBGColor('#0d0d0f');
+	
+}
+
+
 var loadImages = function(obj, callback){
 	var len = obj.length;
 	var loaded = 0;
@@ -119,7 +125,7 @@ var MainGame = function(){
 	});
 	io.setCollisionCallback('player', 'bonus', function(player_, bonus){
 		bonuses[bonus.id].useBonus(player_);
-		statement(bonuses[bonus.id].text);
+		statementQueue.push(bonuses[bonus.id].text);
 		io.rmvFromGroup(bonus, 'bonus');
 	});
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
@@ -137,12 +143,19 @@ var MainGame = function(){
 	var t1 = 0;
 	var release = 0 
 	
-	statement('Prepare');
+	statementQueue.push('Prepare');
+	statementQueue.push('Protect');
+	statementQueue.push('Your');
+	statementQueue.push('Homeland');
+	//-----------------
 	io.setFramerate(60, function(){
 		if(quit)
 			io.cancelFramerate();
+			
+		statement();
+		
 		if(rampage >= 100){
-			statement('✠RAMPAGE✠');
+			statementQueue.push('✠RAMPAGE✠');
 			rampageText.setText('Rampage');
 			rampage = 0;
 		}
@@ -179,15 +192,11 @@ function main(IO){
 	scrapImage.onload = function(){
 		scrapAnim = new iio.SpriteMap(scrapImage,140,140);
 	
-		console.log('scrap');
 		image90.onload = function(){
 		
 			explosionAnim = new iio.SpriteMap(image90,100,100);
-			console.log('kaboom');
 			laserFlashImg.onload = function(){
-				console.log('flash');
 				
-				statement('Prepare');
 				
 				loadImages(enemyStats,
 					loadImages(enemyProjectiles,
