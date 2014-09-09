@@ -28,14 +28,7 @@ var LostGame = function(text){
 						.setFillStyle('red'),-20);
 }
 
-var dropBonus = function(x,y){
-	var bonus = iio.getRandomInt(0,1);
-	io.addToGroup('bonus',new iio.SimpleRect(x,y))
-			.createWithImage(bonusImg)
-			.enableKinematics()
-			.setVel(0, 8)
-			.setBound('bottom', io.canvas.height+120);
-}
+
 
 var spawnExplosion = function(x_,y_){
 	var count = iio.getRandomInt(3,5);

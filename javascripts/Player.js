@@ -14,22 +14,6 @@ var projectiles = [
 	{name:'Kinetic Sand', 		ammo: 80, damage: 3, penetration: 5, range: 487, velocity:40, cooldown: 12, imagPath:imgPath+'kineticSand.png'},
 ];
 
-projectiles[4].fire = function(obj){
-	if(this.ammo<=0)
-		return true;
-	this.ammo--;
-	var count = 20;
-	for(var i=0; i<count; i++){
-		var angle = -0.35+0.035*i;
-		io.addToGroup('lasers', new Projectile(obj.pos.x,obj.pos.y-10, this.damage),-1)
-		.createWithImage(this.image)
-		.enableKinematics()
-		.setBound('top', obj.pos.y - this.range*Math.cos(angle))
-		.setVel(Math.sin (angle)*this.velocity,-Math.cos(angle)*this.velocity*iio.getRandomNum(0.9,1.1));
-		
-	}
-	return false;
-}
 projectiles[0].fire = function(obj){
 		io.addToGroup('lasers', new Projectile(obj.pos.x,obj.pos.y-10, this.damage),-1)
 		.createWithImage(this.image)
@@ -85,6 +69,22 @@ projectiles[3].fire = function(obj){
 		
 	return false;
 }
+projectiles[4].fire = function(obj){
+	if(this.ammo<=0)
+		return true;
+	this.ammo--;
+	var count = 20;
+	for(var i=0; i<count; i++){
+		var angle = -0.35+0.035*i;
+		io.addToGroup('lasers', new Projectile(obj.pos.x,obj.pos.y-10, this.damage),-1)
+		.createWithImage(this.image)
+		.enableKinematics()
+		.setBound('top', obj.pos.y - this.range*Math.cos(angle))
+		.setVel(Math.sin (angle)*this.velocity,-Math.cos(angle)*this.velocity*iio.getRandomNum(0.9,1.1));
+		
+	}
+	return false;
+}
 	
 var rockets = [
 	{name:'Rocket', 		ammo: 12, damage: 200, penetration: 5, range: 700, velocity:16, cooldown: 8, imagPath:imgPath+'rocket.png'},
@@ -92,13 +92,25 @@ var rockets = [
 ];	
 
 var bonuses = [
-	{name: 'healing', 				time: 0, timeLeft:0, image: 0, addBonuses: function(obj){obj.hp += 100}, removeBonus: function(obj){}},
-	{name: 'shield', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){obj.shield+=100}, removeBonus: function(obj){}},
-	{name: 'PGIAmmo', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){projectiles[3].ammo += 50;}, removeBonus: function(obj){}},
-	{name: 'EMPAmmo', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){projectiles[3].ammo += 50;}, removeBonus: function(obj){}},
-	{name: 'RocketsAmmo', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){projectiles[3].ammo += 50;}, removeBonus: function(obj){}},
-	{name: 'AtomicsRocketsAmmo', 					time: 60, timeLeft:0, image: 0, addBonuses: function(obj){projectiles[3].ammo += 50;}, removeBonus: function(obj){}},
+	{name: 'Healing', text:'Hp +100', image: null, image: 0, useBonus: function(obj){obj.hp += 100}},
+	{name: 'Healing', text:'♥++', image: null, image: 0, useBonus: function(obj){obj.lives ++; obj.calcLives(); }},
+	{name: 'Shield', text:'Shield +100', image: null, image: 0, useBonus: function(obj){obj.shield+=100}},
+	{name: 'PGIAmmo', text:'Plasma +50', image: null, image: 0, useBonus: function(obj){projectiles[2].ammo += 50;}},
+	{name: 'EMPAmmo', text:'EMP +20', image: null, image: 0, useBonus: function(obj){projectiles[3].ammo += 20;}},
+	{name: 'SandAmmo', text:'Kinetic +25', image: null, image: 0, useBonus: function(obj){projectiles[4].ammo += 25;}},
+	{name: 'RocketsAmmo', text:'Rockets +5', image: null, image: 0, useBonus: function(obj){rockets[0].ammo += 5;}},
+	{name: 'AtomicsRocketsAmmo', text:'☢ة ت ث  ج   ر حز ذخ دس☢', image: null, image: 0, useBonus: function(obj){rockets[1].ammo += 50;}},
 ];
+
+var dropBonus = function(x,y){
+	var bonus = iio.getRandomInt(0,bonuses.length);
+	var tmp = io.addToGroup('bonus',new iio.SimpleRect(x,y))
+			.createWithImage(bonuses[bonus].image)
+			.enableKinematics()
+			.setVel(0, 8)
+			.setBound('bottom', io.canvas.height+120);
+	tmp.id = bonus;
+}
 
 var playerAnim = [imgPath+'playerLeft.png',
 							imgPath+'player.png',
@@ -135,13 +147,12 @@ function Player(){
 						.setFont('18px Impact')
 						.setFillStyle('red'));
 		this.lives = 3;
-		var slives='';
-		for(var i=0; i< this.lives; i++)
-			slives += '♥';
 		// this.livesText = io.addToGroup('GUI', new iio.Text('♥: '+this.lives,100,15)
-		this.livesText = io.addToGroup('GUI', new iio.Text(slives,100,15)
+		this.livesText = io.addToGroup('GUI', new iio.Text('♥♥♥',100,15)
 						.setFont('18px Impact')
 						.setFillStyle('red'));
+						
+		this.calcLives();
 		this.scoreText = io.addToGroup('GUI', new iio.Text('Score: '+this.score,io.canvas.width - 20,15)
 						.setFont('18px Impact')
 						.setTextAlign('right')
@@ -149,14 +160,19 @@ function Player(){
 		this.weapText = io.addToGroup('GUI', new iio.Text('--- ',20, io.canvas.height-5)
 						.setFont('18px Impact')
 						.setFillStyle('white'));
-		this.buff = null;
 		
 		this.shield = 100;
 		this.shieldText = io.addToGroup('GUI', new iio.Text('Shield: '+this.shield+'%',20,45)
 						.setFont('18px Impact')
 						.setFillStyle('blue'));
 	}
-
+	
+	Player.prototype.calcLives = function(){
+			var slives='';
+			for(var i=0; i< this.lives; i++)
+				slives += '♥';
+			this.livesText.setText(slives);
+	}
 	Player.prototype.getHit = function(damage){
 		if(this.shield > 0){
 			this.shield -= damage/3;
@@ -170,10 +186,7 @@ function Player(){
 			this.hp = 100;
 			this.lives--;
 			
-			var slives='';
-			for(var i=0; i< this.lives; i++)
-				slives += '♥';
-			this.livesText.setText(slives);
+			this.calcLives();
 			if(this.lives == 0){
 				this.livesText.setText('☠☠☠');
 				LostGame('☠ur noob!!! lolz!!☠');
@@ -276,14 +289,6 @@ function Player(){
 			// this.weaponCooldown = projectiles[this.weaponID].cooldown;
 		// }
 		this.fire();
-		
-		if(this.buff != null){
-			this.buff.time--;
-			if(this.buff.time < 0){
-				this.buff.removeBonus(this);
-				this.buff = null;
-			}
-		}
 		
 		this.shield = Math.max( Math.min(this.shield+0.1, 100) , 0);
 		this.shieldText.setText('shield: '+Math.round(this.shield)+'%');

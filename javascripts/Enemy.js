@@ -10,6 +10,7 @@ var enemyImagPath = [
 	imgPath + 'enemy2.png',
 	imgPath + 'enemy3.png',
 	imgPath + 'enemy4.png',
+	imgPath + 'enemy5.png',
 ];
 var enemyImag = [];
 
@@ -17,9 +18,9 @@ var enemyStats = [
 	{name:'e0', hp:20, armour:5, dmg: 10, pen: 11,  },
 	{name:'e1', hp:30, armour:6, dmg: 15, pen: 11,  },
 	{name:'e1', hp:90, armour:6, dmg: 15, pen: 11,  },
-	{name:'e1', hp:30, armour:6, dmg: 15, pen: 11,  },
-	{name:'e1', hp:30, armour:6, dmg: 15, pen: 11,  },
-	{name:'e1', hp:30, armour:6, dmg: 15, pen: 11,  },
+	{name:'e1', hp:30, armour:6, dmg: 55, pen: 11,  },
+	{name:'e1', hp:30, armour:6, dmg: 25, pen: 11,  },
+	{name:'e1', hp:30, armour:6, dmg: 25, pen: 11,  },
 ];
 
 

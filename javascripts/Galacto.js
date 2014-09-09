@@ -26,9 +26,17 @@ function main(IO){
 		projectiles[i].image = new Image();
 		projectiles[i].image.src = projectiles[i].imagPath;
 	}
+	for(i=0; i<rockets.length; i++){
+		rockets[i].image = new Image();
+		rockets[i].image.src = rockets[i].imagPath;
+	}
 	for(i=0; i<enemyProjectiles.length; i++){
 		enemyProjectiles[i].image = new Image();
 		enemyProjectiles[i].image.src = enemyProjectiles[i].imgPath;
+	}
+	for(i=0; i<bonuses.length; i++){
+		bonuses[i].image = new Image();
+		bonuses[i].image.src = imgPath+bonuses[i].name+'.png';
 	}
 
 	
@@ -41,7 +49,7 @@ function main(IO){
 	io.addGroup('explosion');
 	setBackground();
 	player = io.addToGroup('player', new Player(io.canvas.center.x, io.canvas.height-100, 'Dez'));
-	player.switchWeapon(4);
+	player.switchWeapon(1);
 
  	window.addEventListener('keydown', function(event){
 		player.updateInput(event, true);
@@ -54,7 +62,7 @@ function main(IO){
 		player.updateInput(event, false);
 	});
 	
-
+	bonusText = null;
 	
 	io.setCollisionCallback('lasers', 'enemy', function(laser, enemy){
 		player.getPoints(14);
@@ -127,7 +135,26 @@ function main(IO){
 		}
 	});
 	io.setCollisionCallback('player', 'bonus', function(player_, bonus){
-			
+			bonuses[bonus.id].useBonus(player_);
+			// io.addGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2)
+						// .setFont('18px Impact')
+						// .setTextAlign('center')
+						// .setFillStyle('red'));
+	textLifetime = 60;
+	io.rmvFromGroup(bonusText, 'GUI');
+	bonusText = io.addToGroup('GUI', new iio.Text(bonuses[bonus.id].text,io.canvas.width/2,io.canvas.height/2),-20)
+						.setFillStyle('red')
+						.setFont('58px Impact')
+						.setTextAlign('center')
+						.enableUpdates(function(){
+							textLifetime--;
+							bonusText.styles.alpha = textLifetime/60;
+							if(textLifetime<=0){
+								io.rmvFromGroup(this, 'GUI');
+								return false;
+							}
+							return true;
+						})
 			io.rmvFromGroup(bonus, 'bonus');
 	});
 	io.setCollisionCallback('player', 'elasers', function(player_, elaser){
@@ -200,7 +227,7 @@ function main(IO){
 			release = iio.getRandomInt(30,50);
 			var x = iio.getRandomInt(30,io.canvas.width-30);
 			var y = iio.getRandomInt(-50,-100);
-				io.addToGroup('enemy', new Enemy(x,y,iio.getRandomInt(0,4)));
+				io.addToGroup('enemy', new Enemy(x,y,iio.getRandomInt(0,enemyStats.length)));
 				// .setBounds(null, io.canvas.width-50, null, 50, function(obj){
 					// obj.vel.x = 0;
 					// return true;
