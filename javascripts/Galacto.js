@@ -180,8 +180,6 @@ function main(IO){
 	image90.src = imgPath+'explosion.png';
 	explosionAnim = new iio.SpriteMap(image90,100,100);
 	
-	bonusImg = new Image();
-	bonusImg.src = imgPath+'bonus.png';
 		
 	
 	statement('Prepare');
