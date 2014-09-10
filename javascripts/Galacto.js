@@ -3,6 +3,46 @@ var fps = 60;
 
 setBackground = function(){
 	io.setBGColor('#0d0d0f');
+	var starImgs = [];
+	var starCount = 2;
+	var starDensity = io.canvas.width/30;
+	var baseVel = 5;
+	for(var i=0; i<starCount; i++)
+		starImgs[i] = new Image();
+		
+	
+	moveToTop = function(obj){
+		obj.setPos(iio.getRandomInt(10, io.canvas.width-10)
+									,iio.getRandomInt(-340, -100));
+		return true;
+	}
+	starImgs[0].src = imgPath+'StarSM1.png'
+	starImgs[1].src = imgPath+'StarSM2.png'
+	
+	for(var i=0; i<starCount; i++){
+	(function(n){
+		starImgs[n].onload = function(){
+			var zIndex, vel;
+			
+			switch(n){
+				case 0: zIndex = -20;vel = baseVel;break;
+				case 1: zIndex = -15;vel = baseVel*1.1;break;
+			}
+			
+			
+			for(var j=0; j<starDensity; j++){
+				io.addToGroup('stars', new iio.SimpleRect(iio.getRandomInt(10, io.canvas.width-10),iio.getRandomInt(0, io.canvas.height)), zIndex)
+					.createWithImage(starImgs[n])
+					.enableKinematics()
+					.setVel(0,vel*iio.getRandomNum(0.95, 1.05))
+					.setBound('bottom',io.canvas.height+140, moveToTop);
+					console.log('new Star '+n)
+			}
+		}
+		
+		})(i)
+	}
+	
 	
 }
 
@@ -141,12 +181,14 @@ var MainGame = function(){
 	var e1 = 0;
 	var e2 = 5;
 	var t1 = 0;
-	var release = 0 
+	var release = 0;
 	
-	statementQueue.push('Prepare');
 	statementQueue.push('Protect');
 	statementQueue.push('Your');
 	statementQueue.push('Homeland');
+	statementQueue.push('Prepare');
+	statementQueue.push('Prepare');
+	statementQueue.push('ACHTUNG');
 	//-----------------
 	io.setFramerate(60, function(){
 		if(quit)

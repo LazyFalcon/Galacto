@@ -98,7 +98,7 @@ var bonuses = [
 	{name: 'EMPAmmo', text:'EMP +20', image: null, image: 0, useBonus: function(obj){projectiles[3].ammo += 20;}},
 	{name: 'SandAmmo', text:'Kinetic +25', image: null, image: 0, useBonus: function(obj){projectiles[4].ammo += 25;}},
 	{name: 'RocketsAmmo', text:'Rockets +5', image: null, image: 0, useBonus: function(obj){rockets[0].ammo += 5;}},
-	{name: 'AtomicsRocketsAmmo', text:'☢ة ت ث  ج   ر حز ذخ دس☢', image: null, image: 0, useBonus: function(obj){rockets[1].ammo += 50;}},
+	{name: 'AtomicsRocketsAmmo', text:'☢ة ت ث  ج   حذخ دس☢', image: null, image: 0, useBonus: function(obj){rockets[1].ammo += 50;}},
 ];
 
 var dropBonus = function(x,y){

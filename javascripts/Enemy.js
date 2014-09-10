@@ -72,6 +72,12 @@ function Enemy(){
 									.setVel(0, enemyProjectiles[0].velocity+this.vel.y);
 	}
 
+	
+/* zachowanie bossa:
+	- kilka wieżyczek, niezaleznych
+	- rusza się, celuje w gracza
+
+*/
 function Boss(){
 	this.Boss.apply(this, arguments);
 }
